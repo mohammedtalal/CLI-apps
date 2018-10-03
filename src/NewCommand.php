@@ -26,12 +26,15 @@ class NewCommand extends Command {
 	public function execute(InputInterface $input, OutputInterface $output) {
 		//assert that the folder doesnt already exist
 		$directory = getcwd() . '/' . $input->getArgument('name');
+
+		$output->writeln('<info>Crafting application...</info>');
 		
 		$this->assertApplicationDoesNotExist($directory, $output);
 
 		//Download nightly version of laravel app
 		$this->download($zipFile = $this->makeFileName())
-			 ->extract($zipFile, $directory);
+			 ->extract($zipFile, $directory)
+			 ->cleanUp($zipFile);
 		
 		$output->writeln('<comment>Application Ready!!</comment>');
 	}
@@ -63,6 +66,13 @@ class NewCommand extends Command {
 		$archive->open($zipFile);
 		$archive->extractTo($directory);
 		$archive->close();
+
+		return $this;
+	}
+
+	private function cleanUp($zipFile) {
+		@chmod($zipFile, 0777);
+		@unlink($zipFile);
 
 		return $this;
 	}
