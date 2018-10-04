@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SayHelloCommand extends Command {
+class SayHelloCommand extends Command{
 	public function configure() {
 		$this->setName("sayHelloTo")
 			->setDescription('offer a greeting to the given person.')

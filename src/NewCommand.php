@@ -3,6 +3,7 @@ namespace Acme;
 
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,16 +19,21 @@ class NewCommand extends Command {
 	}
 
 	public function configure() {
-		$this->setName("new")
+		$this->setName("make:laravel")
 			 ->setDescription('Create a new Laravel application.')
-			 ->addArgument('name', InputArgument::REQUIRED);
+			 ->addArgument('name', InputArgument::REQUIRED, 'Project Folder Name.');
 	}
 
 	public function execute(InputInterface $input, OutputInterface $output) {
+		
+		if (! class_exists('ZipArchive')) {
+            throw new RuntimeException('The Zip PHP extension is not installed. Please install it and try again.');
+        }
+
 		//assert that the folder doesnt already exist
 		$directory = getcwd() . '/' . $input->getArgument('name');
 
-		$output->writeln('<info>Crafting application...</info>');
+		$output->writeln('<info>Crafting laravel application...</info>');
 		
 		$this->assertApplicationDoesNotExist($directory, $output);
 
@@ -36,7 +42,7 @@ class NewCommand extends Command {
 			 ->extract($zipFile, $directory)
 			 ->cleanUp($zipFile);
 		
-		$output->writeln('<comment>Application Ready!!</comment>');
+		$output->writeln('<comment>Application ready! Build something amazing.</comment>');
 	}
 
 	/*
@@ -76,5 +82,11 @@ class NewCommand extends Command {
 
 		return $this;
 	}
+
+	public function commandName(InputInterface $input) {
+		return $input->getArgument('name');
+	}
+
+	
 
 }
